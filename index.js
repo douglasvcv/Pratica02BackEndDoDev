@@ -1,42 +1,45 @@
+const database = require('./bd')
+
 const express = require('express')
 const app = express()
 
 app.use(express.json())
 
-const veiculos = []
+
+const metodos = database.veiculosDatabase()
+
+
 
 app.get('/veiculos', (req, res)=>{
     console.log("Está no GET")
-    res.status(200).send({veiculos:veiculos})
+    res.status(200).send(metodos.list())
     return
 })
 
 app.get('/veiculos/:id', (req, res)=>{
     let veiculoId = req.params.id
     console.log("Está no GET by ID")
-    res.status(200).send(veiculos.find(x => x.id==veiculoId))
+    res.status(200).send(metodos.get(veiculoId))
     return
 })
 
 app.post('/veiculos', (req, res)=>{
     console.log('Está no POST')
-    veiculos.push(req.body)
-    res.status(200).send(req.body)
+    res.status(200).send(metodos.insert(req.body))
     return
 })
 
 app.put('/veiculos/:id', (req, res)=>{
     let veiculoId = req.params.id
     console.log("Está no PUT")
-    veiculos[veiculoId - 1] = req.body
-    res.status(200).send(veiculos.find(x => x.id == veiculoId))
+    res.status(200).send(metodos.update(req.body, veiculoId))
     return
 })
 
 app.delete('/veiculos/:id', (req, res)=>{
     let veiculoId = req.params.id
     console.log("Está no DELETE")
-    veiculos.splice(veiculoId - 1, 1)
+    metodos.del(veiculoId)
     res.status(200).send("Veículo excluído com sucesso!")
     return
 })
